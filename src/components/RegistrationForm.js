@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import io from 'socket.io-client'
+
+const socket = io('http://localhost:5000')
 
 const RegistrationForm = () => {
 	const [formData, setFormData] = useState({
@@ -8,6 +11,18 @@ const RegistrationForm = () => {
 		age: '',
 		password: ''
 	})
+
+	useEffect(() => {
+		// Добавьте слушателя для события 'userRegistered'
+		socket.on('userRegistered', userData => {
+			console.log('New user registered:', userData)
+			// Дополнительные действия при регистрации нового пользователя
+		})
+
+		return () => {
+			socket.disconnect()
+		}
+	}, [])
 
 	const handleChange = e => {
 		setFormData({ ...formData, [e.target.name]: e.target.value })
