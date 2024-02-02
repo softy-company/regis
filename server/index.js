@@ -56,6 +56,39 @@ app.post('/register', (req, res) => {
 	})
 })
 
+// Login endpoint
+app.post('/login', (req, res) => {
+	const { username, password } = req.body
+	const sql = 'SELECT * FROM test WHERE username = ? AND password = ?'
+
+	db.query(sql, [username, password], (err, results) => {
+		if (err) {
+			console.log('Error executing MySQL query:', err)
+			res.status(500).send('Internal Server Error')
+		} else {
+			if (results.length > 0) {
+
+				// Пользователь существует в базе данных
+
+const user = results[0] // Предполагаем, что у вас есть только один пользователь с таким именем
+res.status(200).json({
+	username: user.username,
+	age: user.age,
+	email: user.email
+	// Дополнительные данные о пользователе, которые вы хотите отправить
+})        // res.status(200).json({
+				// 	username: user.username,
+				// 	age: user.age,
+				// 	email: user.email,
+        // });
+			} else {
+				// Пользователь не найден или пароль неверен
+				res.status(401).send('Invalid username or password')
+			}
+		}
+	})
+})
+
 const PORT = process.env.PORT || 5000
 server.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`)
